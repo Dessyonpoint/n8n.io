@@ -1,0 +1,13 @@
+{
+  "name": "n8n-automation",
+  "version": "1.0.0",
+  "description": "n8n automation deployed on Render",
+  "main": "index.js",
+  "scripts": {
+    "start": "n8n start"
+  },
+  "dependencies": {
+    "n8n": "^1.0.0"
+  },
+  "license": "ISC"
+}
