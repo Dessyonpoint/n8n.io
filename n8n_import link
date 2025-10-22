@@ -1,0 +1,523 @@
+{
+  "name": "Wedding RSVP Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "from": "=+12292803122",
+        "to": "={{ $json.body.data.fields[2].value }}",
+        "toWhatsapp": "={{ false }}",
+        "message": "=Hi,{{ $json.body.data.fields[0].value }} \nThank you for confirming! Please find attached your official invitation.\nWe look forward to celebrating with you 🎊",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        640,
+        672
+      ],
+      "id": "82e6a486-85f6-46d0-8803-74b3da633ff0",
+      "name": "Send an SMS/MMS/WhatsApp message",
+      "credentials": {
+        "twilioApi": {
+          "id": "gc871UkXORsFiFDX",
+          "name": "Twilio account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Parse Tally Data').item.json.body.data.fields[1].value }}",
+        "subject": "💍 You're Invited! Wedding Invitation Attached",
+        "message": "=<div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;\">\n  \n  <h2 style=\"color: #8B4513; text-align: center;\">💍 You're Invited! 💍</h2>\n  \n  <p style=\"font-size: 16px; line-height: 1.6;\">\n    Hi <strong>{{ $json.body.data.fields[0].value }}</strong>,\n  </p>\n  \n  <p style=\"font-size: 16px; line-height: 1.6;\">\n    Thank you for confirming your attendance at our wedding! 🎊\n  </p>\n  \n  <p style=\"font-size: 16px; line-height: 1.6;\">\n    Please find your official wedding invitation attached below:\n  </p>\n  \n  <div style=\"text-align: center; margin: 30px 0;\">\n    <a href=\"https://drive.google.com/file/d/YOUR_FILE_ID/view\" \n       style=\"background-color: #DC143C; color: white; padding: 15px 30px; text-decoration: none; border-radius: 25px; font-size: 16px; font-weight: bold; display: inline-block;\">\n      📄 View Wedding Invitation\n    </a>\n  </div>\n  \n  <p style=\"font-size: 15px; text-align: center; color: #666;\">\n    A calendar invite with full details has been sent separately\n  </p>\n  \n  <p style=\"font-size: 16px; text-align: center; margin-top: 30px;\">\n    We look forward to celebrating with you! ❤️<br><br>\n    <strong>Moses & Anita</strong> 💑\n  </p>\n  \n</div>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        832,
+        352
+      ],
+      "id": "b96d8b92-9e61-4127-8414-ba7c9629a5e4",
+      "name": "Send a message",
+      "webhookId": "003513c8-283e-4d72-b3c9-2309a02cf35d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "jNmr9gpzf2tWMrcL",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "moses.anita.events@gmail.com",
+        "subject": "={{ $('Webhook').item.json.body.data.fields[0].value }}🎉 NEW RSVP RECEIVED!: ",
+        "emailType": "text",
+        "message": "=New RSVP Received!     \n👤 Name: {{ $('Webhook').item.json.body.data.fields[0].value }}  \n📧 Email: {{ $('Webhook').item.json.body.data.fields[1].value }}  \n📱 Phone: {{ $('Webhook').item.json.body.data.fields[2].value }}\n⏰ Time: {{ $now.format('DD HH:mm:ss') }}\n\n✅ Confirmation email sent (ID:{{ $('Send a message').item.json.id }})  \n✅ Added to Google Sheets    \n✅ Calendar invite sent     \nTotal RSVPs: {{ $json['Check your spreadsheet'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1904,
+        208
+      ],
+      "id": "4faee8e5-b586-453f-a40d-e38d5245173d",
+      "name": "Send a message1",
+      "webhookId": "49ebb450-0d19-4aca-b345-04bc982b9e5e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "jNmr9gpzf2tWMrcL",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "56243afd-70b0-4de7-bd8e-0b045bbfbfcc",
+              "leftValue": "={{ $('Webhook').item.json.body.data.fields[3].options[1].text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "e6e3bf92-b412-46a1-b41c-4520df04341a",
+              "leftValue": "={{ $('Webhook').item.json.body.data.fields[3].options[0].text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        848,
+        176
+      ],
+      "id": "6af563f3-227a-4e3b-bf80-ebd8fe10c430",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "test@invalid@domain.com",
+        "subject": "⚠️ Wedding RSVP Failed",
+        "message": "=Failed to send confirmation email to {{ $json.email }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1200,
+        608
+      ],
+      "id": "584dee38-e07f-4474-a008-f3c4774cc837",
+      "name": "Send a message2",
+      "webhookId": "dd8627e3-1690-4273-b5a8-0ef82147f512",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "jNmr9gpzf2tWMrcL",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\n// Let's see EVERYTHING that's coming from Tally\nconsole.log('Full input data:', JSON.stringify(items, null, 2));\n\n// Get the first item\nconst item = items[0];\n\n// Log the structure\nconsole.log('Item structure:', JSON.stringify(item.json, null, 2));\n\n// Check if fields exist\nif (item.json && item.json.data && item.json.data.fields) {\n  console.log('Fields array:', JSON.stringify(item.json.data.fields, null, 2));\n  \n  // Log each field label\n  item.json.data.fields.forEach((field, index) => {\n    console.log(`Field ${index}:`, field.label, '=', field.value);\n  });\n} else {\n  console.log('⚠️ Fields array not found!');\n}\n\n// Return the raw data so we can see it\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        384
+      ],
+      "id": "061cdc71-a1a7-48a8-9290-b616517f2094",
+      "name": "Parse Tally Data"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4e025fdd-9c06-43e2-9de6-4d62c80d942a",
+              "name": "weddingURL",
+              "value": "https://drive.google.com/file/d/19McbAs3uehhcuthAmSssimTxlaobX9JB/view?usp=sharing",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1056,
+        144
+      ],
+      "id": "86ab174d-e298-466d-822e-fda6de50e617",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9f2a1abc-6180-4600-90ee-46d5acb0c2ed",
+              "name": "Check your spreadsheet",
+              "value": " https://docs.google.com/spreadsheets/d/1yNsietN7-drrwVEaUjHVP-kONFloCDASdAlxPp7Z-H4/edit?usp=sharing",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1696,
+        160
+      ],
+      "id": "ad139a15-b083-4b86-9d0f-19e5006236ce",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "fd2de5f5c02fa7ee37722d87dd4acd7ee6a7398f8ba60dadf5733b46e02cf524@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Moses & Anita"
+        },
+        "start": "={{ new Date('2025-11-29T10:00:00') }}",
+        "end": "={{ new Date('2025-11-29T15:00:00') }}",
+        "additionalFields": {
+          "attendees": [
+            "={{ $('Webhook').item.json.body.data.fields[1].value }}"
+          ],
+          "description": "=You're invited to celebrate our wedding! 💍\n\n{{ $('Webhook').item.json.body.data.fields[0].value }}, thank you for confirming your attendance!\n\nWEDDING DETAILS:\n📅 Date: Saturday, November 29th, 2025\n🕒 Time: 10:00 AM - 3:00 PM\n📍 Venue: Living Faith Church, Zone 7, Dutse, Bwari Area Council, Abuja-FCT\n🗺️ Address: Plot 121, Panaf Drive Zone 7, Okada Junction, Abuja, FCT\n👗 Dress Code: Black / White / Peach / Red\n\nFull Wedding Program & Details:\nview{{ $('Edit Fields1').item.json.weddingURL }}\n\nWe can't wait to celebrate with you!\n\nWith love,\nMoses & Anita 💑",
+          "location": "=Plot 121, Panaf Drive Zone 7, Okada Junction, Abuja, FCT",
+          "sendUpdates": "all",
+          "summary": "=Moses & Anita Wedding"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1472,
+        160
+      ],
+      "id": "06e66256-5d47-46a7-bd5a-0a6d445475c9",
+      "name": "Create an event2",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "sCH2hd92sSiQt5QW",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "pastor-moses",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        64,
+        352
+      ],
+      "id": "9c7a0111-551e-4c58-ac1a-ea538e7f5d46",
+      "name": "Webhook",
+      "webhookId": "defc1b05-dcc5-4c35-92e9-4aa8a99b5ec7"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bc233143-fe34-4064-9e32-f018f6b2465d",
+              "name": "invitationViewLink",
+              "value": "https://drive.google.com/file/d/19McbAs3uehhcuthAmSssimTxlaobX9JB/view?usp=sharing",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        592,
+        384
+      ],
+      "id": "6f2038ed-ffd6-4c63-aaca-0ebca1bb8eb6",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1yNsietN7-drrwVEaUjHVP-kONFloCDASdAlxPp7Z-H4",
+          "mode": "list",
+          "cachedResultName": "WeddingRSVP",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yNsietN7-drrwVEaUjHVP-kONFloCDASdAlxPp7Z-H4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yNsietN7-drrwVEaUjHVP-kONFloCDASdAlxPp7Z-H4/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('Webhook').item.json.body.data.fields[0].value }}",
+            "Email": "={{ $('Webhook').item.json.body.data.fields[1].value }}",
+            "Phone": "={{ $('Webhook').item.json.body.data.fields[2].value }}",
+            "Status": "Confirmed",
+            "Gmail_Message_ID": "={{ $('Send a message').item.json.id }}",
+            "Thread_ID": "={{ $('Send a message').item.json.threadId }}",
+            "Timestamp": "={{ $now.format('DD HH:mm:ss') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Gmail_Message_ID",
+              "displayName": "Gmail_Message_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Thread_ID",
+              "displayName": "Thread_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1264,
+        144
+      ],
+      "id": "e4a02316-9e71-4dce-a698-4d8436e8f93e",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "SevC37QdREiJ4CIt",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Tally Data": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Parse Tally Data",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send an SMS/MMS/WhatsApp message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Create an event2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1bbf5883-9751-438d-9748-5f32f053e85d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "76bfebad81e40a21166762cbbfe18e21d485ec0cd6bc9bcd3e045b0837ace0a0"
+  },
+  "id": "oSIKMniEQWHVPUGR",
+  "tags": []
+}
